@@ -11,4 +11,7 @@
 `pip install -r requirements.txt`
 
 **Run Development Server (app.py)**
-`python app.py`
+`flask run`
+
+https://developer.themoviedb.org/docs/getting-started
+https://12factor.net/
