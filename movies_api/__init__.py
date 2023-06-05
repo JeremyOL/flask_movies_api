@@ -1,5 +1,4 @@
 import os
-#os.getenv('MOVIES_API_KEY')
 
 from flask import Flask, jsonify, redirect, url_for
 
@@ -20,9 +19,9 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return 'Hello, World!'
+    #@app.route('/')
+    #def hello():
+    #    return 'Hello, World!'
 
     # importing database
     from . import db
@@ -31,5 +30,10 @@ def create_app(test_config=None):
     # importing auth blueprint
     from . import auth
     app.register_blueprint(auth.bp)
+    
+    # importing movies blueprint
+    from . import movies
+    app.register_blueprint(movies.bp)
+    app.add_url_rule('/', endpoint='movies.index')
 
     return app
