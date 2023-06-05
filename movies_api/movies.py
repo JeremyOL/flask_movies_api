@@ -7,7 +7,7 @@ import os
 import json
 
 from movies_api.db import get_db
-#from movies_api.auth import login_required
+from movies_api.auth import login_required
 
 bp = Blueprint('movies', __name__, url_prefix='/movies')
 
