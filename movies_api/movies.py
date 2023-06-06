@@ -43,7 +43,7 @@ def search_movies_by_name():
     name = request.args.get('name', '')
     lang = request.args.get('lang', 'es-MX')
     page = request.args.get('page', '1')
-    url = '{0}/search/movie?query={1}&language={2}&page={3}&api_key={4}'.format(MOVIES_API_URL, name, lang, page , MOVIES_API_KEY)
+    url = f'{MOVIES_API_URL}/search/movie?query={name}&language={lang}&page={page}&api_key={MOVIES_API_KEY}'
     response = requests.get(url)
     return jsonify({
         'status': 'ok', 
@@ -64,7 +64,7 @@ def single_movie_details(movie_id):
             Detailed information of the movie as movie
     """
     lang = request.args.get('lang', 'es-MX')
-    url = '{0}/movie/{1}?language={2}&api_key={3}'.format(MOVIES_API_URL, movie_id, lang, MOVIES_API_KEY)
+    url = _tmdb_movie_details(movie_id, lang)
     response = requests.get(url)
     return jsonify({
         'status': 'ok', 
@@ -97,7 +97,7 @@ def list_movies_details():
     if not error:
         movies_details = []
         for movie_id in movie_ids:
-            url = '{0}/movie/{1}?language={2}&api_key={3}'.format(MOVIES_API_URL, movie_id, lang, MOVIES_API_KEY)
+            url = _tmdb_movie_details(movie_id, lang)
             response = requests.get(url)
             response_data = json.loads(response.text)
             if response_data.get('status_code'):
@@ -117,3 +117,6 @@ def list_movies_details():
         'status': 'bad',
         'message': error
     })
+    
+def _tmdb_movie_details(movie_id, lang):
+    return f'{MOVIES_API_URL}/movie/{movie_id}?language={lang}&api_key={MOVIES_API_KEY}'
