@@ -38,7 +38,7 @@ def search_movies_by_name():
             lang: languaje of the response, default es-MX
             page: page of the response
         Returns:
-            List of movies containing the searched name
+            List of movies containing the searched name as movies
     """
     name = request.args.get('name', '')
     lang = request.args.get('lang', 'es-MX')
@@ -52,7 +52,7 @@ def search_movies_by_name():
     })
     
 @bp.route('/<movie_id>/details', methods=['GET'])
-def movie_details(movie_id):
+def single_movie_details(movie_id):
     """
         Request movie details using the following URL:
             https://api.themoviedb.org/3/movie/{movie_id}
@@ -60,6 +60,8 @@ def movie_details(movie_id):
             movie_id: id of the movie
         Query Params:
             lang: languaje of the response, default es-MX
+        Returns:
+            Detailed information of the movie as movie
     """
     lang = request.args.get('lang', 'es-MX')
     url = '{0}/movie/{1}?language={2}&api_key={3}'.format(MOVIES_API_URL, movie_id, lang, MOVIES_API_KEY)
@@ -68,4 +70,50 @@ def movie_details(movie_id):
         'status': 'ok', 
         'message': 'Movie details',
         'movie': json.loads(response.text)
+    })
+    
+@bp.route('/list_details', methods=['GET'])
+def list_movies_details():
+    """
+        Request movie details from list of ids
+        Body:
+            json format list of movies ids
+            ex. {
+                movie_ids:[808,807,806]
+            }
+        Query Params:
+            lang: languaje of the response, default es-MX
+        Return:
+            id, title and tagline of the movies as movies_details.
+    """
+    data = request.json
+    movie_ids = data.get('movie_ids')
+    lang = request.args.get('lang', 'es-MX')
+    error = None
+    
+    if not movie_ids:
+        error = 'movie_ids not found'
+    
+    if not error:
+        movies_details = []
+        for movie_id in movie_ids:
+            url = '{0}/movie/{1}?language={2}&api_key={3}'.format(MOVIES_API_URL, movie_id, lang, MOVIES_API_KEY)
+            response = requests.get(url)
+            response_data = json.loads(response.text)
+            if response_data.get('status_code'):
+                continue
+            movies_details.append({
+                'id': response_data.get('id'),
+                'title': response_data.get('title'),
+                'tagline': response_data.get('tagline')
+            })
+        return jsonify({
+            'status':'ok',
+            'message': 'Movies details',
+            'movies_details': movies_details
+        })
+            
+    return jsonify({
+        'status': 'bad',
+        'message': error
     })
