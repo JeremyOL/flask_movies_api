@@ -117,6 +117,6 @@ def list_movies_details():
         'status': 'bad',
         'message': error
     })
-    
+
 def _tmdb_movie_details(movie_id, lang):
     return f'{MOVIES_API_URL}/movie/{movie_id}?language={lang}&api_key={MOVIES_API_KEY}'
